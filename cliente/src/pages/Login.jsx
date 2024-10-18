@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState, useRef } from 'react'; 
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -9,11 +9,10 @@ import { FloatLabel } from 'primereact/floatlabel';
 export function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const toast = React.createRef();
+    const toast = useRef(null); // Cambiar a useRef
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Aquí puedes agregar la lógica para autenticar al usuario
         if (username && password) {
             toast.current.show({ severity: 'success', summary: 'Login Successful', detail: 'Welcome!', life: 3000 });
         } else {
@@ -23,33 +22,41 @@ export function Login() {
 
     return (
         <div className="login-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <Card title="Login" style={{ width: '300px', backgroundColor: '#f5f5f5' }}>
+            <Card style={{ width: '400px', height: '400px' }}>
+                <h1 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Login</h1>
+                <Toast ref={toast} /> {/* Agregar el componente Toast aquí */}
                 <form onSubmit={handleLogin}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                        <FloatLabel style={{ flex: 1 }}>
+                    <div className="p-fluid" style={{ marginTop: '2rem', marginBottom: '2rem', width: '100%' }}>
+                        <FloatLabel style={{ width: '100%' }}>
                             <InputText 
-                                id="username"  
+                                id="email"  
                                 className="p-inputtext-lg"  
                                 value={username} 
                                 onChange={(e) => setUsername(e.target.value)} 
+                                style={{ width: '100%' }} 
                             />
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="email">Email</label>  
                         </FloatLabel>
                     </div>
 
-                    <FloatLabel>
-                        <Password 
-                            id="password" 
-                            value={password} 
-                            className="p-inputtext-lg" 
-                            onChange={(e) => setPassword(e.target.value)} 
-                            feedback={false} 
-                            toggleMask 
-                        />
-                        <label htmlFor="password">Password</label>
-                    </FloatLabel>
-                    
-                    <Button className="p-inputtext-lg"  label="Login" icon="pi pi-sign-in " type="submit" style={{ marginTop: '1rem' }} />
+                    <div className="p-fluid" style={{ marginTop: '2rem', marginBottom: '2rem', width: '100%' }}>
+                        <FloatLabel style={{ width: '100%' }}>
+                            <Password 
+                                id="password" 
+                                value={password} 
+                                onChange={(e) => setPassword(e.target.value)} 
+                                feedback={false} 
+                                toggleMask 
+                                className="p-inputtext-lg" 
+                            />
+                            <label htmlFor="password">Password</label> 
+                        </FloatLabel>
+                    </div>
+
+                    <div className="p-fluid">
+                        
+                    </div>
+                    <Button className="p-inputtext-lg" label="Sign Up" icon="pi pi-sign-in" type="submit" style={{ marginTop: '1rem', marginBottom: '2rem', width: '100%' }} />
                 </form>
             </Card>
         </div>
