@@ -5,16 +5,50 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Password } from 'primereact/password';
 import { FloatLabel } from 'primereact/floatlabel';
+import { Link } from 'react-router-dom';
+import { Validationuser } from '../api/login.api';
 
 export function Login() {
-    const [username, setUsername] = useState('');
+    const [email, setemail] = useState('');
     const [password, setPassword] = useState('');
     const toast = useRef(null); // Cambiar a useRef
 
-    const handleLogin = (e) => {
+    const handleLogin = async ( ) => {
         e.preventDefault();
-        if (username && password) {
-            toast.current.show({ severity: 'success', summary: 'Login Successful', detail: 'Welcome!', life: 3000 });
+        if (email && password) {
+            const data = {
+                email: email ,
+                password: password ,
+            };
+
+            try {
+                // Intenta iniciar sesión
+                const response = await Validationuser(data);
+                if (response) {
+                    toast.current.show({ severity: 'success', summary: 'Login Successful', detail: 'Welcome!', life: 3000 });
+                }
+            } catch (error) {
+                console.log(error)
+                if (error.response && error.response.data) {
+                    const errorMessages = error.response.data;
+                    const message = errorMessages.non_field_errors ? errorMessages.non_field_errors[0] : 'Error al iniciar sesión, inténtalo de nuevo.';
+                    toast.current.show({ 
+                        severity: 'error', 
+                        summary: 'Login Failed', 
+                        detail: message, 
+                        life: 3000 
+                    });
+                } else {
+                    toast.current.show({ 
+                        severity: 'error', 
+                        summary: 'Error', 
+                        detail: 'Ocurrió un error inesperado.', 
+                        life: 3000 
+                    });
+                }
+            }
+
+            
         } else {
             toast.current.show({ severity: 'error', summary: 'Login Failed', detail: 'Please enter valid credentials', life: 3000 });
         }
@@ -31,9 +65,10 @@ export function Login() {
                             <InputText 
                                 id="email"  
                                 className="p-inputtext-lg"  
-                                value={username} 
-                                onChange={(e) => setUsername(e.target.value)} 
+                                value={email} 
+                                onChange={(e) => setemail(e.target.value)} 
                                 style={{ width: '100%' }} 
+                                keyfilter="email"
                             />
                             <label htmlFor="email">Email</label>  
                         </FloatLabel>
@@ -56,8 +91,17 @@ export function Login() {
                     <div className="p-fluid">
                         
                     </div>
-                    <Button className="p-inputtext-lg" label="Sign Up" icon="pi pi-sign-in" type="submit" style={{ marginTop: '1rem', marginBottom: '2rem', width: '100%' }} />
+                    <Button severity="danger" label="Sign Up" icon="pi pi-sign-in" type="submit" style={{ marginTop: '1rem', marginBottom: '2rem', width: '100%' }} />
                 </form>
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-300 mt-4">
+                    <span>Not registered?</span>
+                    <Link 
+                        to="/Create/user" 
+                        className="text-red-700 hover:underline dark:text-red-500 ml-2"
+                    >
+                        Create an account
+                    </Link>
+                </div>
             </Card>
         </div>
     );
